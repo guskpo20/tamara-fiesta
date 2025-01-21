@@ -130,7 +130,7 @@ export default function Home() {
           <h3>Ubicacion <span className="onlyDesktop">📌</span></h3>
           <p className="button"><a href="https://www.google.com/maps?q=-30.9849948883057,-55.5038642883301" target="_blank">Apreta aca para la ubicacion!</a></p>
           <div className="location">
-            <iframe src="https://www.google.com/maps/embed?pb=!1m17!1m12!1m3!1d3278.930460944998!2d-56.08650592425409!3d-34.73214717290851!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m2!1m1!2zMzTCsDQzJzU1LjciUyA1NsKwMDUnMDIuMiJX!5e0!3m2!1ses!2suy!4v1737419337831!5m2!1ses!2suy" width="600" height="450" allowFullScreen="" loading="lazy" referrerPolicy="no-referrer-when-downgrade"></iframe>
+            <iframe src="https://www.google.com/maps/embed?pb=!1m17!1m12!1m3!1d3278.930460944998!2d-56.08650592425409!3d-34.73214717290851!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m2!1m1!2zMzTCsDQzJzU1LjciUyA1NsKwMDUnMDIuMiJX!5e0!3m2!1ses!2suy!4v1737419337831!5m2!1ses!2suy" width="600" height="450" loading="lazy" referrerPolicy="no-referrer-when-downgrade"></iframe>
             <Image src={Casa} alt="imagen de la casa" width={600} height={450}/>
           </div>
         </section>
