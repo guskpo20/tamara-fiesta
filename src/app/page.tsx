@@ -3,7 +3,6 @@ import Image from "next/image";
 import Tamara from "/public/tamara.png";
 import TamaraMobile from "/public/tamaraMobile.jpeg";
 import Casa from "/public/casa.jpeg";
-import Link from "next/link";
 import { useEffect, useState } from "react";
 
 export default function Home() {
