@@ -4,6 +4,8 @@ import Tamara from "/public/tamara.png";
 import TamaraMobile from "/public/tamaraMobile.jpeg";
 import Casa from "/public/casa.jpeg";
 import { useEffect, useState } from "react";
+import { uploadImage, getImages } from '../utils/supabaseClient'; 
+
 
 export default function Home() {
 
@@ -80,6 +82,40 @@ export default function Home() {
   };
 
 
+
+  const [image, setImage] = useState<File | null>(null);
+
+  const handleFileChange = (event: React.ChangeEvent<HTMLInputElement>) => {
+    const file = event.target.files?.[0];
+    if (file) {
+      setImage(file);
+    }
+  };
+
+  const handleUpload = async () => {
+    if (image) {
+      const uploadedPath = await uploadImage(image);
+      if (uploadedPath) {
+        alert(`Image uploaded successfully: ${uploadedPath}`);
+      }
+    }
+  };
+
+
+  const [images, setImages] = useState<any[]>([]);
+  const [loading, setLoading] = useState<boolean>(true);
+
+  useEffect(() => {
+    const fetchImages = async () => {
+      const imageList = await getImages();
+      setImages(imageList);
+      console.log(imageList)
+      setLoading(false);
+    };
+
+    fetchImages();
+  }, []);
+
   return (
     <div className="mainDiv">
       <header className={`navbar ${isMenuOpen ? "activeNav" : ""}`}>
@@ -147,6 +183,23 @@ export default function Home() {
       <div className="whiteBackground">
         <section id="fotos" className="sectionFour sectionPadding section">
           <h3>Subí las fotos que saques en la fiesta, asi las guardo 😊</h3>
+            <input type="file" onChange={handleFileChange} />
+            <button onClick={handleUpload}>Upload Image</button>
+
+           {/*  {images ? (
+              images.map((image, index) => (
+                <div key={index}>
+                  <img
+                    src={`${process.env.NEXT_PUBLIC_SUPABASE_URL}/storage/v1/object/public/tamara/images/${image.name}`} // Construir la URL pública
+                    alt={`Imagen ${index + 1}`}
+                    width="300"
+                    height="300"
+                  />
+                </div>
+              ))
+            ) : (
+              <p>No images found.</p>
+            )} */}
         </section>
       </div>
     </div>
