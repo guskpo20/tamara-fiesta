@@ -3,11 +3,23 @@ import Image from "next/image";
 import Tamara from "/public/tamara.png";
 import TamaraMobile from "/public/tamaraMobile.jpeg";
 import Casa from "/public/casa.jpeg";
-import { useEffect, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import { uploadImage, getImages } from '../utils/supabaseClient'; 
-
+import Swal from 'sweetalert2'
 
 export default function Home() {
+  const Toast = Swal.mixin({
+    toast: true,
+    position: 'bottom-end',
+    iconColor: 'white',
+    customClass: {
+      popup: 'colored-toast',
+    },
+    showConfirmButton: false,
+    timer: 1000,
+    timerProgressBar: true,
+  })
+
 
   const [targetDate] = useState("2025-02-15T20:00:00Z");
 
@@ -82,7 +94,7 @@ export default function Home() {
   };
 
 
-
+  const fileInputRef = useRef<HTMLInputElement | null>(null);
   const [imagesToUpload, setImagesToUpload] = useState<File[]>([]);
 
   const handleFileChange = (event: React.ChangeEvent<HTMLInputElement>) => {
@@ -94,20 +106,42 @@ export default function Home() {
 
   const handleUpload = async () => {
     if (imagesToUpload.length > 0) {
+      Toast.fire({
+        icon: "info",
+        title: "¡Subiendo imagenes!",
+      });
       const uploadPromises = imagesToUpload.map(async (image) => {
-        const uploadedPath = await uploadImage(image);
-        if (uploadedPath) {
-          alert(`Image uploaded successfully: ${uploadedPath}`);
-        }
+        return await uploadImage(image);
       });
   
-      // Espera a que todos los archivos se suban
-      await Promise.all(uploadPromises);
+      const results = await Promise.all(uploadPromises);
 
-      fetchImages();
-    }
-  };
+      const failedUploads = results.filter((path) => path === null);
 
+      if (failedUploads.length > 0) {
+        Toast.fire({
+          icon: "error",
+          title: `No se pudieron subir ${failedUploads.length} imágenes. Intenta nuevamente.`,
+        });
+      } else {
+        Toast.fire({
+          icon: "success",
+          title: "Todas las imágenes fueron subidas exitosamente.",
+        });
+
+        if (fileInputRef.current) {
+          fileInputRef.current.value = "";
+        }
+
+        fetchImages();
+      }
+    return;
+    };
+    Toast.fire({
+      icon: "error",
+      title: "Selecciona imagenes antes de subir",
+    });
+  }
 
   const [images, setImages] = useState<unknown[]>([]);
   const [currentPage, setCurrentPage] = useState<number>(1); 
@@ -181,7 +215,7 @@ export default function Home() {
           <h3>Ubicacion <span className="onlyDesktop">📌</span></h3>
           <p className="button"><a href="https://www.google.com/maps?q=-30.9849948883057,-55.5038642883301" target="_blank">Apreta aca para la ubicacion!</a></p>
           <div className="location">
-            <iframe src="https://www.google.com/maps/embed?pb=!1m17!1m12!1m3!1d3278.930460944998!2d-56.08650592425409!3d-34.73214717290851!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m2!1m1!2zMzTCsDQzJzU1LjciUyA1NsKwMDUnMDIuMiJX!5e0!3m2!1ses!2suy!4v1737419337831!5m2!1ses!2suy" width="600" height="450" loading="lazy" referrerPolicy="no-referrer-when-downgrade"></iframe>
+            <iframe src="https://www.google.com/maps/embed?pb=!1m17!1m12!1m3!1d3420.4798402287024!2d-55.506439224409654!3d-30.984994874463684!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m2!1m1!2zMzDCsDU5JzA2LjAiUyA1NcKwMzAnMTMuOSJX!5e0!3m2!1ses!2suy!4v1737563930433!5m2!1ses!2suy" width="600" height="450" loading="lazy" referrerPolicy="no-referrer-when-downgrade"></iframe>
             <Image src={Casa} alt="imagen de la casa" width={600} height={450}/>
           </div>
         </section>
@@ -189,7 +223,7 @@ export default function Home() {
       <div className="yellowBackground">
         <section id="asistencia" className="sectionThree sectionPadding section">
           <h3>Confirmar asistencia</h3>
-          <p>Confirma tu asistencia antes del 27/01 porque ya me gradué de &quot;procrastinación&quot;. 🥳</p>
+          <p>Confirma tu asistencia antes del 01/02 porque ya me gradué de &quot;procrastinación&quot;. 🥳</p>
           <div>
             <iframe src="https://docs.google.com/forms/d/e/1FAIpQLSfK9J_G2XbA4BOnWgGONQh4K_RJv0JQtukQ4DHvl1YmnkHgcw/viewform?embedded=true" width="650" height="1300">Cargando…</iframe>
           </div>
@@ -199,7 +233,7 @@ export default function Home() {
         <section id="fotos" className="sectionFour sectionPadding section">
           <h3>Subí las fotos que saques en la fiesta, asi las guardo 😊</h3>
           <div className="inputAndButton">
-            <input type="file" onChange={handleFileChange} multiple />
+            <input type="file" ref={fileInputRef} onChange={handleFileChange} multiple />
             <p>Una vez seleccionadas las imagenes, dale click al siguiente boton!</p>
             <button onClick={handleUpload}>Subir fotos</button>
           </div>
