@@ -2,6 +2,8 @@
 import Image from "next/image";
 import Tamara from "/public/tamara.png";
 import TamaraMobile from "/public/tamaraMobile.jpeg";
+import FlowerBackgroundOne from "/public/background_flower.png"
+import FlowerBackgroundTwo from "/public/background_flower_2.png"
 import Casa from "/public/casa.jpeg";
 import { useEffect, useRef, useState } from "react";
 import { uploadImage, getImages } from '../utils/supabaseClient'; 
@@ -203,6 +205,8 @@ export default function Home() {
             <Image src={Tamara} alt="imagen de tamara" width={522} height={685}/>
           </div>
         </section>
+        <Image className="backgroundFlowerOne" src={FlowerBackgroundOne} alt="" width={550} height={356}/>
+        <Image className="backgroundFlowerTwo" src={FlowerBackgroundTwo} alt="" width={350} height={535}/>
       </div>
       <div className="whiteBackground">
         <section id="fecha" className="sectionTwo sectionPadding section">
@@ -219,6 +223,7 @@ export default function Home() {
             <Image src={Casa} alt="imagen de la casa" width={600} height={450}/>
           </div>
         </section>
+        <Image className="backgroundFlowerFour" src={FlowerBackgroundTwo} alt="" width={350} height={535}/>
       </div>
       <div className="yellowBackground">
         <section id="asistencia" className="sectionThree sectionPadding section">
@@ -228,6 +233,7 @@ export default function Home() {
             <iframe src="https://docs.google.com/forms/d/e/1FAIpQLSfK9J_G2XbA4BOnWgGONQh4K_RJv0JQtukQ4DHvl1YmnkHgcw/viewform?embedded=true" width="650" height="1300">Cargando…</iframe>
           </div>
         </section>
+        
       </div>
       <div className="whiteBackground">
         <section id="fotos" className="sectionFour sectionPadding section">

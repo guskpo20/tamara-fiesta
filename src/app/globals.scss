@@ -73,7 +73,7 @@ body {
     overflow: hidden;
     display: flex;
     align-items: center;
-
+    z-index: 10;
     &.activeNav{
       height: 350px !important;
     }
@@ -136,9 +136,51 @@ body {
     background-color: var(--colorFive);
     color: var(--colorOne);
   }
-
+  .yellowBackground{
+    z-index: 2 !important;
+  }
   .yellowBackground,.whiteBackground{
     width: 100%;
+    position: relative;
+    z-index: 1;
+
+    .backgroundFlowerOne {
+      opacity: .5;
+      position: absolute;
+      bottom:-80px;
+      left:0;
+      z-index: 2;
+      @media (max-width: 970px) {
+        display: none;
+      }
+    }
+    .backgroundFlowerTwo{
+      opacity: .5;
+      position: absolute;
+      bottom:-150px;
+      right:0;
+      z-index: 2;
+      @media (max-width: 970px) {
+        opacity: .1;
+      }
+    }
+
+    .backgroundFlowerFour{
+      opacity: .2;
+      position: absolute;
+      bottom: -242px;
+      left: 44%;
+      transform: translateX(-50%);
+      transform: scaleY(-1);
+      z-index: 2;
+      @media (max-width: 970px) {
+        opacity: .1;
+        right: 0 !important;
+        transform: translateX(0%);
+        transform: scaleY(-1);
+        left: inherit
+      }
+    }
   }
 
   .sectionPadding{
@@ -175,6 +217,8 @@ body {
     margin: 0 auto !important;
     max-width: 1440px;
     width: 100%;
+    position: relative;
+    z-index: 5;
   }
   
   .sectionOne{
