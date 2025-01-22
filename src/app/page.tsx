@@ -208,7 +208,7 @@ export default function Home() {
             images.map((image, index) => (
               <div key={index}>
                 <img
-                  src={`${process.env.NEXT_PUBLIC_SUPABASE_URL}/storage/v1/object/public/tamara/images/${image.name}`}
+                  src={`${process.env.NEXT_PUBLIC_SUPABASE_URL}/storage/v1/object/public/tamara/images/${(image as { name: string }).name}`}
                   alt={`Imagen ${index + 1}`}
                   width="300"
                   height="300"
