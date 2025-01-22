@@ -83,38 +83,53 @@ export default function Home() {
 
 
 
-  const [image, setImage] = useState<File | null>(null);
+  const [imagesToUpload, setImagesToUpload] = useState<File[]>([]);
 
   const handleFileChange = (event: React.ChangeEvent<HTMLInputElement>) => {
-    const file = event.target.files?.[0];
-    if (file) {
-      setImage(file);
+    const files = event.target.files;
+    if (files) {
+      setImagesToUpload(Array.from(files));  // Convierte FileList a un array
     }
   };
 
   const handleUpload = async () => {
-    if (image) {
-      const uploadedPath = await uploadImage(image);
-      if (uploadedPath) {
-        alert(`Image uploaded successfully: ${uploadedPath}`);
-      }
+    if (imagesToUpload.length > 0) {
+      const uploadPromises = imagesToUpload.map(async (image) => {
+        const uploadedPath = await uploadImage(image);
+        if (uploadedPath) {
+          alert(`Image uploaded successfully: ${uploadedPath}`);
+        }
+      });
+  
+      // Espera a que todos los archivos se suban
+      await Promise.all(uploadPromises);
+
+      fetchImages();
     }
   };
 
 
-  const [images, setImages] = useState<any[]>([]);
-  const [loading, setLoading] = useState<boolean>(true);
+  const [images, setImages] = useState<unknown[]>([]);
+  const [currentPage, setCurrentPage] = useState<number>(1); 
+  const [totalPages, setTotalPages] = useState<number>(0); 
+  const [pageSize] = useState<number>(20); 
+
+  const fetchImages = async () => {
+    const { images, totalPages } = await getImages(currentPage, pageSize); 
+    setImages(images);
+    setTotalPages(totalPages);
+  };
 
   useEffect(() => {
-    const fetchImages = async () => {
-      const imageList = await getImages();
-      setImages(imageList);
-      console.log(imageList)
-      setLoading(false);
-    };
-
     fetchImages();
-  }, []);
+  }, [currentPage]); 
+
+  const handlePageChange = (newPage: number) => {
+    if (newPage > 0 && newPage <= totalPages) {
+      setCurrentPage(newPage); 
+    }
+  };
+
 
   return (
     <div className="mainDiv">
@@ -183,23 +198,36 @@ export default function Home() {
       <div className="whiteBackground">
         <section id="fotos" className="sectionFour sectionPadding section">
           <h3>Subí las fotos que saques en la fiesta, asi las guardo 😊</h3>
-            <input type="file" onChange={handleFileChange} />
-            <button onClick={handleUpload}>Upload Image</button>
-
-           {/*  {images ? (
-              images.map((image, index) => (
-                <div key={index}>
-                  <img
-                    src={`${process.env.NEXT_PUBLIC_SUPABASE_URL}/storage/v1/object/public/tamara/images/${image.name}`} // Construir la URL pública
-                    alt={`Imagen ${index + 1}`}
-                    width="300"
-                    height="300"
-                  />
-                </div>
-              ))
-            ) : (
-              <p>No images found.</p>
-            )} */}
+          <div className="inputAndButton">
+            <input type="file" onChange={handleFileChange} multiple />
+            <p>Una vez seleccionadas las imagenes, dale click al siguiente boton!</p>
+            <button onClick={handleUpload}>Subir fotos</button>
+          </div>
+          <div className="gallery">
+          {images ? (
+            images.map((image, index) => (
+              <div key={index}>
+                <img
+                  src={`${process.env.NEXT_PUBLIC_SUPABASE_URL}/storage/v1/object/public/tamara/images/${image.name}`}
+                  alt={`Imagen ${index + 1}`}
+                  width="300"
+                  height="300"
+                />
+              </div>
+            ))
+          ) : (
+            <p>Aun no hay imagenes!</p>
+          )}
+          </div>
+          <div className="pagination">
+            <button onClick={() => handlePageChange(currentPage - 1)} disabled={currentPage === 1}>
+              Anterior
+            </button>
+            <span>Página {currentPage}</span>
+            <button onClick={() => handlePageChange(currentPage + 1)} disabled={currentPage === totalPages}>
+              Siguiente
+            </button>
+          </div>
         </section>
       </div>
     </div>
