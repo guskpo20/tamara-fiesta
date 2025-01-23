@@ -152,7 +152,7 @@ export default function Home() {
 
   const fetchImages = async () => {
     const { images, totalPages } = await getImages(currentPage, pageSize); 
-    setImages(images);
+    setImages(images.filter(image => image.name != ".emptyFolderPlaceholder"));
     setTotalPages(totalPages);
     console.log(images)
   };
@@ -245,7 +245,7 @@ export default function Home() {
             <button onClick={handleUpload}>Subir fotos</button>
           </div>
           <div className="gallery">
-          {images.length > 1 ? (
+          {images.length > 0 ? (
             images.map((image, index) => (
               <div key={index}>
                 <img
