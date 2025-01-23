@@ -244,7 +244,7 @@ export default function Home() {
             <button onClick={handleUpload}>Subir fotos</button>
           </div>
           <div className="gallery">
-          {images ? (
+          {images.length > 0 ? (
             images.map((image, index) => (
               <div key={index}>
                 <img
