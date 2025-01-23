@@ -154,6 +154,7 @@ export default function Home() {
     const { images, totalPages } = await getImages(currentPage, pageSize); 
     setImages(images);
     setTotalPages(totalPages);
+    console.log(images)
   };
 
   useEffect(() => {
@@ -244,7 +245,7 @@ export default function Home() {
             <button onClick={handleUpload}>Subir fotos</button>
           </div>
           <div className="gallery">
-          {images.length > 0 ? (
+          {images.length > 1 ? (
             images.map((image, index) => (
               <div key={index}>
                 <img
