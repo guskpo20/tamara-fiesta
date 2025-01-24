@@ -40,7 +40,17 @@ export default function Home() {
     }
   };
 
-  const [timeLeft, setTimeLeft] = useState(calculateTimeLeft());
+  const [timeLeft, setTimeLeft] = useState<{ days: number, hours: number, minutes: number, seconds: number }>({
+    days: 0, hours: 0, minutes: 0, seconds: 0
+  });
+  
+  useEffect(() => {
+    setTimeLeft(calculateTimeLeft());
+    const timer = setInterval(() => {
+      setTimeLeft(calculateTimeLeft());
+    }, 1000);
+    return () => clearInterval(timer);
+  }, []);
 
   useEffect(() => {
     const timer = setInterval(() => {
@@ -56,23 +66,22 @@ export default function Home() {
 
   useEffect(() => {
     const handleScroll = () => {
-      const scrollPosition = window.scrollY;
-
-      // Recorremos las secciones para determinar cuál está en la vista
-      for (const section of sections) {
+      let currentSection = "inicio";
+      sections.forEach((section) => {
         const element = document.getElementById(section);
         if (element) {
-          const offsetTop = element.offsetTop - 100; // Ajusta el valor según tu navbar
-          const offsetBottom = offsetTop + element.offsetHeight;
-
-          if (scrollPosition >= offsetTop && scrollPosition < offsetBottom) {
-            setActiveSection(section);
+          const rect = element.getBoundingClientRect();
+          if (rect.top <= window.innerHeight / 2 && rect.bottom >= window.innerHeight / 2) {
+            currentSection = section;
           }
         }
-      }
+      });
+      setActiveSection(currentSection);
     };
 
     window.addEventListener("scroll", handleScroll);
+    handleScroll(); // Initial check
+
     return () => window.removeEventListener("scroll", handleScroll);
   }, []);
 
@@ -80,16 +89,26 @@ export default function Home() {
   const [isMenuOpen, setIsMenuOpen] = useState(false);
   const toggleMenu = () => setIsMenuOpen(!isMenuOpen);
 
+  const getOffsetTop = (element: HTMLElement): number => {
+    let offsetTop = 0;
+    while (element) {
+      offsetTop += element.offsetTop;
+      element = element.offsetParent as HTMLElement;
+    }
+    return offsetTop;
+  };
 
   const handleScrollTo = (event: React.MouseEvent, targetId: string) => {
-    event.preventDefault(); // Prevenir el comportamiento predeterminado del link
-    const targetElement = document.getElementById(targetId);
+    event.preventDefault();
     setIsMenuOpen(false);
+    const targetElement = document.getElementById(targetId);
+    
     if (targetElement) {
-      const screenWidth = window.innerWidth;
-      const offset = screenWidth < 970 ? 350 : 100;
+      const totalOffsetTop = getOffsetTop(targetElement);
+      const offset = window.innerWidth <= 768 ? 350 : 100; // Adjust offset for mobile
+      console.log("Posición absoluta:", totalOffsetTop);
       window.scrollTo({
-        top: targetElement.offsetTop - offset, 
+        top: totalOffsetTop - offset,
         behavior: "smooth",
       });
     }
@@ -186,7 +205,7 @@ export default function Home() {
           </div>
         </div>
         <span className="menu-toggle onlyMobile" onClick={toggleMenu}>
-          {isMenuOpen ? "X" : "☰"} {/* Cambiar entre X y hamburguesa */}
+          {isMenuOpen ? "X" : "☰"}
         </span>
       </header>
       <div className="yellowBackground">
@@ -253,6 +272,7 @@ export default function Home() {
                   alt={`Imagen ${index + 1}`}
                   width="300"
                   height="300"
+                  loading="lazy"
                 />
               </div>
             ))

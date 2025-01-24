@@ -74,6 +74,12 @@ body {
     display: flex;
     align-items: center;
     z-index: 10;
+
+    a {
+      pointer-events: auto !important;
+      z-index: 9999 !important;
+    }
+    
     &.activeNav{
       height: 350px !important;
     }
